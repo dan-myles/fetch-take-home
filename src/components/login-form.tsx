@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { API } from "@/lib/api";
+import { api } from "@/lib/api";
 
 export const LoginForm = () => {
   const [name, setName] = useState("");
@@ -20,8 +20,8 @@ export const LoginForm = () => {
 
     try {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Login attempt with:", { email: name });
+      const res = await api.login(name, email);
+      console.log("Login attempt with:", res);
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);

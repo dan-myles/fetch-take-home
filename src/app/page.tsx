@@ -82,20 +82,6 @@ const Page = () => {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="flex flex-row justify-center pt-10 bg-gray-300 rounded-t-[400px]">
-        <div className="my-auto  rounded-t-3xl p-4 max-w-52 mb-12">
-          <div className="flex items-center space-x-2 mb-4">
-            <span className="text-2xl" role="img" aria-label="Dog emoji">
-              🐶
-            </span>
-            <span className="font-bold text-xl">PawLookup</span>
-          </div>
-          <p className="text-black">
-            This is apart of a take home assesment for Fetch.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };

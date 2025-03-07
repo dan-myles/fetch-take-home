@@ -20,9 +20,9 @@ const login = async (name: string, email: string) => {
     body: JSON.stringify({ name, email }),
   });
 
-  return response.json();
+  return response.ok;
 };
 
-export const API = {
+export const api = {
   login,
 };
