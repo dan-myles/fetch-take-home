@@ -1,11 +1,10 @@
 export type Dog = {
   id: string;
+  img: string;
   name: string;
-  breed: string;
   age: number;
-  gender: string;
-  location: string;
-  img?: string;
+  zip_code: string;
+  breed: string;
 };
 
 export type Location = {
@@ -18,8 +17,8 @@ export type Location = {
 };
 
 export type Coordinates = {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lon: number;
 };
 
 export type GeoBoundingBox =
