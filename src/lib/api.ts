@@ -1,25 +1,28 @@
 const API_URL = "https://frontend-take-home-service.fetch.com";
 
 const API_ENDPOINTS = {
-  login: `${API_URL}/auth/login`,
+  login: {
+    url: `${API_URL}/auth/login`,
+    method: "POST",
+  },
+  logout: {
+    url: `${API_URL}/auth/logout`,
+    method: "POST",
+  },
 };
 
-const login = async (email: string, password: string) => {
-  const response = await fetch(API_ENDPOINTS.login, {
-    method: "POST",
+const login = async (name: string, email: string) => {
+  const response = await fetch(API_ENDPOINTS.login.url, {
+    method: API_ENDPOINTS.login.method,
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ name, email }),
   });
-  return response.json();
-};
 
-const fetchDogs = async () => {
-  const response = await fetch(`${API_URL}/dogs`);
   return response.json();
 };
 
 export const API = {
-  fetchDogs,
+  login,
 };

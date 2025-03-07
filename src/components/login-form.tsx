@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { API } from "@/lib/api";
 
 export const LoginForm = () => {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -12,7 +13,7 @@ export const LoginForm = () => {
     e.preventDefault();
     setError("");
 
-    if (!email || !password) {
+    if (!name || !email) {
       setError("Please fill in all fields");
       return;
     }
@@ -20,13 +21,17 @@ export const LoginForm = () => {
     try {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      console.log("Login attempt with:", { email });
+      console.log("Login attempt with:", { email: name });
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
       setError("An error occurred. Please try again.");
       console.error(err);
     }
+  };
+
+  const handleForgot = () => {
+    alert("Hey, this doesn't actually work... but it looks nice? 😁");
   };
 
   return (
@@ -45,18 +50,18 @@ export const LoginForm = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label
-            htmlFor="email"
+            htmlFor="name"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Email Address
+            Name
           </label>
           <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            id="name"
+            type="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            placeholder="you@example.com"
+            placeholder="John Doe"
             required
           />
         </div>
@@ -64,41 +69,27 @@ export const LoginForm = () => {
         <div>
           <div className="flex justify-between mb-1">
             <label
-              htmlFor="password"
+              htmlFor="email"
               className="block text-sm font-medium text-gray-700"
             >
-              Password
+              Email
             </label>
-            <a
-              href="#"
+            <p
               className="text-sm text-purple-600 hover:text-purple-800"
+              onClick={handleForgot}
             >
-              Forgot password?
-            </a>
+              Forgot email?
+            </p>
           </div>
           <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-            placeholder="••••••••"
+            placeholder="john@gmail.com"
             required
           />
-        </div>
-
-        <div className="flex items-center">
-          <input
-            id="remember-me"
-            type="checkbox"
-            className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-          />
-          <label
-            htmlFor="remember-me"
-            className="ml-2 block text-sm text-gray-700"
-          >
-            Remember me
-          </label>
         </div>
 
         <button
@@ -109,18 +100,6 @@ export const LoginForm = () => {
           {isLoading ? "Signing in..." : "Sign in"}
         </button>
       </form>
-
-      <div className="mt-6 text-center">
-        <p className="text-sm text-gray-600">
-          Don't have an account?{" "}
-          <a
-            href="#"
-            className="font-medium text-purple-600 hover:text-purple-800"
-          >
-            Sign up
-          </a>
-        </p>
-      </div>
     </div>
   );
 };
