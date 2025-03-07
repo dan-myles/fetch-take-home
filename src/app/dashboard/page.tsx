@@ -1,10 +1,27 @@
 "use client";
 
+import { api, DogSearchResult } from "@/lib/api";
+import { Dog } from "@/lib/types";
 import { Kalam } from "next/font/google";
+import { useEffect, useState } from "react";
 
 const kalam = Kalam({ subsets: ["latin"], weight: "400" });
 
 const Page = () => {
+  const [data, setData] = useState<Dog[]>();
+  // DMD-OZUBBPFf4ZNZzBtw
+  // EMD-OZUBBPFf4ZNZzBtw
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await api.dogs.get({ ids: ["DMD-OZUBBPFf4ZNZzBtw"] });
+      setData(data);
+      console.log("data: ", data);
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <main className="flex-grow flex items-center justify-center mt-[-64px]">
       <div className="w-full max-w-5xl">
@@ -16,70 +33,30 @@ const Page = () => {
           </h2>
         </div>
         <div className="overflow-hidden  rounded-xl shadow-xl">
-          <table className="min-w-full table-auto">
-            <thead className="bg-purple-200 sticky top-0 z-10">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Breed
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Age
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Gender
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                  Price
-                </th>
-              </tr>
-            </thead>
-            <tbody
-              className="overflow-y-scroll block"
-              style={{ height: "400px" }}
+          {/* */}
+
+          {data?.map((dog, idx) => (
+            <div
+              key={idx}
+              className="w-full px-6 py-4 bg-white border-b border-gray-200 flex items-center justify-between"
             >
-              {Array.from({ length: 15 }).map((_, index) => (
-                <tr
-                  key={index}
-                  className="hover:bg-purple-50 block"
-                  style={{ width: "100%" }}
-                >
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block"
-                    style={{ width: "20%" }}
-                  >
-                    Buddy {index + 1}
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block"
-                    style={{ width: "20%" }}
-                  >
-                    Golden Retriever
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block"
-                    style={{ width: "20%" }}
-                  >
-                    3
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block"
-                    style={{ width: "20%" }}
-                  >
-                    Male
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block"
-                    style={{ width: "20%" }}
-                  >
-                    $499.99
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl" role="img" aria-label="Dog emoji">
+                  🐶
+                </span>
+                <span className="font-bold text-2xl text-gray-800">
+                  {dog.name}
+                </span>
+                <img
+                  src={dog.img}
+                  alt={dog.name}
+                  className="w-16 h-16 rounded-full"
+                />
+              </div>
+            </div>
+          ))}
+
+          {/* */}
         </div>
       </div>
     </main>
