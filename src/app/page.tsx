@@ -4,71 +4,35 @@ const Page = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
-      <header className="bg-white shadow-sm py-4">
+      <header className="bg-transparent  py-6 sticky top-0 z-10 backdrop-blur-lg mb-12">
         <div className="container mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <span className="text-2xl" role="img" aria-label="Dog emoji">
               🐶
             </span>
-            <span className="font-bold text-xl text-gray-800">PawAuth</span>
+            <span className="font-bold text-2xl text-gray-800">PawLookup</span>
           </div>
-          <nav>
-            <ul className="flex space-x-6">
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Home
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Features
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Pricing
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  Contact
-                </a>
-              </li>
-            </ul>
-          </nav>
         </div>
       </header>
 
       {/* Main Content */}
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-gradient-to-r from-purple-50 to-blue-50 py-16 md:py-24">
+        <section className="">
           <div className="container mx-auto px-4 flex flex-col md:flex-row items-center">
             <div className="md:w-1/2 mb-10 md:mb-0">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-                Secure Access to Your Favorite Platform
+                Find Your Next
+                <br />
+                <span className="text-purple-600">Dream Dog.</span>
               </h1>
               <p className="text-lg text-gray-600 mb-8">
-                Join thousands of users who trust PawAuth for simple, secure
-                authentication. Get started today and experience the difference.
+                Hey there recruiter, or maybe engineer. Welcome to PawLookup!
+                Thanks for taking the time to check this site out.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="#"
-                  className="px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors text-center"
-                >
-                  Get Started
-                </a>
-                <a
-                  href="#"
-                  className="px-6 py-3 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors text-center"
-                >
-                  Learn More
-                </a>
-              </div>
             </div>
             <div className="md:w-1/2 md:pl-10">
-              <div className="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto">
+              <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md mx-auto">
                 <LoginForm />
               </div>
             </div>
