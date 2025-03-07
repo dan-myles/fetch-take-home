@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { api } from "@/lib/api";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () => {
+  const { login } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,8 +23,8 @@ export const LoginForm = () => {
 
     try {
       setIsLoading(true);
-      const res = await api.login(name, email);
-      console.log("Login attempt with:", res);
+      await login(name, email);
+      router.push("/dashboard");
       setIsLoading(false);
     } catch (err) {
       setIsLoading(false);
@@ -40,7 +43,6 @@ export const LoginForm = () => {
         <h2 className="text-2xl font-bold text-gray-900">Welcome Back</h2>
         <p className="text-gray-600 mt-1">Sign in to your account</p>
       </div>
-
       {error && (
         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
           {error}
@@ -83,7 +85,6 @@ export const LoginForm = () => {
           </div>
           <input
             id="email"
-            type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
