@@ -40,81 +40,41 @@ const Page = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 bg-white">
+        <section className="py-24">
           <div className="container mx-auto px-4">
             <h2 className="text-3xl font-bold text-center mb-12">
-              Why Choose Us
+              Why Hire Me
             </h2>
             <div className="grid md:grid-cols-3 gap-8">
               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-purple-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+                  🤓
                 </div>
-                <h3 className="text-xl font-semibold mb-2">
-                  Secure Authentication
-                </h3>
+                <h3 className="text-xl font-semibold mb-2">Super Nerdy</h3>
                 <p className="text-gray-600">
-                  Industry-standard security protocols to keep your data safe
-                  and secure.
+                  I love tech and love building on the web! CSS not so fun, but
+                  Javascript pretty fun.
                 </p>
               </div>
               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-blue-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 10V3L4 14h7v7l9-11h-7z"
-                    />
-                  </svg>
+                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+                  ⚡
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
                 <p className="text-gray-600">
-                  Optimized performance ensures quick access to your account
-                  every time.
+                  I'm a fast learner and I love to learn new things. I'm
+                  constantly trying to stay up to date with everything web.
                 </p>
               </div>
               <div className="p-6 border border-gray-100 rounded-lg hover:shadow-md transition-shadow">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 text-green-600"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                    />
-                  </svg>
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4 text-2xl">
+                  💪
                 </div>
-                <h3 className="text-xl font-semibold mb-2">Privacy First</h3>
+                <h3 className="text-xl font-semibold mb-2">Dedicated</h3>
                 <p className="text-gray-600">
-                  Your privacy matters to us. We never sell or share your
-                  personal information.
+                  My dedication to quality is as strong as my interest in tech,
+                  meaning I'll tirelessly ensure the project's success and be a
+                  dedicated team member.
                 </p>
               </div>
             </div>
@@ -123,129 +83,17 @@ const Page = () => {
       </main>
 
       {/* Footer */}
-      <footer className="bg-gray-800 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-2xl" role="img" aria-label="Dog emoji">
-                  🐶
-                </span>
-                <span className="font-bold text-xl">PawAuth</span>
-              </div>
-              <p className="text-gray-400">
-                Providing secure authentication solutions since 2023.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-4">Product</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Features
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Pricing
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Documentation
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Releases
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Press
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-lg mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Terms
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="text-gray-400 hover:text-white transition-colors"
-                  >
-                    Security
-                  </a>
-                </li>
-              </ul>
-            </div>
+      <footer className="flex flex-row justify-center pt-10 bg-gray-300 rounded-t-[400px]">
+        <div className="my-auto  rounded-t-3xl p-4 max-w-52 mb-12">
+          <div className="flex items-center space-x-2 mb-4">
+            <span className="text-2xl" role="img" aria-label="Dog emoji">
+              🐶
+            </span>
+            <span className="font-bold text-xl">PawLookup</span>
           </div>
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
-            <p>
-              &copy; {new Date().getFullYear()} PawAuth. All rights reserved.
-            </p>
-          </div>
+          <p className="text-black">
+            This is apart of a take home assesment for Fetch.
+          </p>
         </div>
       </footer>
     </div>
