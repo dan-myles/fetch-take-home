@@ -1,6 +1,6 @@
 "use client";
 
-import { Dog } from "@/lib/types";
+import { Dog, dogBreeds } from "@/lib/types";
 import { useEffect, useState } from "react";
 import {
   SortingState,
@@ -48,7 +48,12 @@ import {
   Sparkles,
 } from "lucide-react";
 import { createColumns } from "./columns";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export function PaginatedDataTable() {
   const [data, setData] = useState<Dog[]>([]);
@@ -57,40 +62,6 @@ export function PaginatedDataTable() {
 
   const pageSizeOptions = [5, 10, 20, 50];
   const [pageSize, setPageSize] = useState(10);
-
-  // Create an array of all dog breeds from the DogBreed type
-  const dogBreeds = [
-    "Affenpinscher", "Afghan Hound", "African Hunting Dog", "Airedale", 
-    "American Staffordshire Terrier", "Appenzeller", "Australian Terrier", 
-    "Basenji", "Basset", "Beagle", "Bedlington Terrier", "Bernese Mountain Dog", 
-    "Black-and-tan Coonhound", "Blenheim Spaniel", "Bloodhound", "Bluetick", 
-    "Border Collie", "Border Terrier", "Borzoi", "Boston Bull", 
-    "Bouvier Des Flandres", "Boxer", "Brabancon Griffon", "Briard", 
-    "Brittany Spaniel", "Bull Mastiff", "Cairn", "Cardigan", 
-    "Chesapeake Bay Retriever", "Chihuahua", "Chow", "Clumber", 
-    "Cocker Spaniel", "Collie", "Curly-coated Retriever", "Dandie Dinmont", 
-    "Dhole", "Dingo", "Doberman", "English Foxhound", "English Setter", 
-    "English Springer", "EntleBucher", "Eskimo Dog", "Flat-coated Retriever", 
-    "French Bulldog", "German Shepherd", "German Short-haired Pointer", 
-    "Giant Schnauzer", "Golden Retriever", "Gordon Setter", "Great Dane", 
-    "Great Pyrenees", "Greater Swiss Mountain Dog", "Groenendael", 
-    "Ibizan Hound", "Irish Setter", "Irish Terrier", "Irish Water Spaniel", 
-    "Irish Wolfhound", "Italian Greyhound", "Japanese Spaniel", "Keeshond", 
-    "Kelpie", "Kerry Blue Terrier", "Komondor", "Kuvasz", "Labrador Retriever", 
-    "Lakeland Terrier", "Leonberg", "Lhasa", "Malamute", "Malinois", 
-    "Maltese Dog", "Mexican Hairless", "Miniature Pinscher", "Miniature Poodle", 
-    "Miniature Schnauzer", "Newfoundland", "Norfolk Terrier", 
-    "Norwegian Elkhound", "Norwich Terrier", "Old English Sheepdog", 
-    "Otterhound", "Papillon", "Pekinese", "Pembroke", "Pomeranian", "Pug", 
-    "Redbone", "Rhodesian Ridgeback", "Rottweiler", "Saint Bernard", "Saluki", 
-    "Samoyed", "Schipperke", "Scotch Terrier", "Scottish Deerhound", 
-    "Sealyham Terrier", "Shetland Sheepdog", "Shih-Tzu", "Siberian Husky", 
-    "Silky Terrier", "Soft-coated Wheaten Terrier", "Staffordshire Bullterrier", 
-    "Standard Poodle", "Standard Schnauzer", "Sussex Spaniel", "Tibetan Mastiff", 
-    "Tibetan Terrier", "Toy Poodle", "Toy Terrier", "Vizsla", "Walker Hound", 
-    "Weimaraner", "Welsh Springer Spaniel", "West Highland White Terrier", 
-    "Whippet", "Wire-haired Fox Terrier", "Yorkshire Terrier"
-  ];
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -104,10 +75,10 @@ export function PaginatedDataTable() {
     {},
   );
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
-  
+
   // Add state for favorited dogs (max 5)
   const [favoriteDogs, setFavoriteDogs] = useState<string[]>([]);
-  
+
   // Add state for matched dog
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false);
@@ -330,12 +301,12 @@ export function PaginatedDataTable() {
       if (prev.includes(dogId)) {
         return prev.filter((id) => id !== dogId);
       }
-      
+
       // If already at max favorites, don't add more
       if (prev.length >= 5) {
         return prev;
       }
-      
+
       // Add the dog to favorites
       return [...prev, dogId];
     });
@@ -344,11 +315,11 @@ export function PaginatedDataTable() {
   // Handle finding a match from favorited dogs
   const handleFindMatch = async () => {
     if (favoriteDogs.length === 0) return;
-    
+
     setIsMatchLoading(true);
     try {
       const matchResult = await api.dogs.match({ ids: favoriteDogs });
-      
+
       // Get the matched dog details
       if (matchResult.match) {
         const matchedDogData = await api.dogs.get({ ids: [matchResult.match] });
@@ -413,9 +384,9 @@ export function PaginatedDataTable() {
 
               {/* Find Match Button - Only show when dogs are favorited */}
               {favoriteDogs.length > 0 && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleFindMatch}
                   disabled={isMatchLoading}
                   className="relative group h-8"
@@ -426,7 +397,9 @@ export function PaginatedDataTable() {
                   <span className="absolute inset-0 rounded-md overflow-hidden">
                     <span className="absolute inset-0 rounded-md bg-gradient-to-r from-yellow-400/0 via-yellow-400/30 to-yellow-400/0 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer"></span>
                   </span>
-                  {isMatchLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                  {isMatchLoading && (
+                    <Loader2 className="ml-2 h-4 w-4 animate-spin" />
+                  )}
                 </Button>
               )}
             </div>
@@ -436,7 +409,11 @@ export function PaginatedDataTable() {
               {/* Age Filter */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 bg-purple-300 text-black hover:bg-purple-200">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 bg-purple-300 text-black hover:bg-purple-200"
+                  >
                     <Filter className="h-4 w-4 mr-1" />
                     Age
                     {Object.keys(ageFilter).length > 0 && (
@@ -501,7 +478,11 @@ export function PaginatedDataTable() {
               {/* Breed Filter */}
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 bg-purple-300 text-black hover:bg-purple-200">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 bg-purple-300 text-black hover:bg-purple-200"
+                  >
                     <Filter className="h-4 w-4 mr-1" />
                     Breed
                     {breedFilter.length > 0 && (
@@ -514,7 +495,10 @@ export function PaginatedDataTable() {
                     <h4 className="font-medium">Filter by Breed</h4>
                     <div className="space-y-2 max-h-[200px] overflow-auto">
                       {dogBreeds.map((breed) => (
-                        <div key={breed} className="flex items-center space-x-2">
+                        <div
+                          key={breed}
+                          className="flex items-center space-x-2"
+                        >
                           <Checkbox
                             id={`breed-${breed}`}
                             checked={breedFilter.includes(breed)}
@@ -588,9 +572,7 @@ export function PaginatedDataTable() {
                 <div className="flex items-center bg-purple-100 text-xs rounded-full px-2 py-1">
                   <span className="mr-1">
                     Age: {ageFilter.min !== undefined ? ageFilter.min : "0"}
-                    {ageFilter.max !== undefined
-                      ? ` - ${ageFilter.max}`
-                      : "+"}
+                    {ageFilter.max !== undefined ? ` - ${ageFilter.max}` : "+"}
                   </span>
                   <button
                     onClick={() => handleAgeFilterChange(undefined, undefined)}
@@ -767,7 +749,9 @@ export function PaginatedDataTable() {
       <Dialog open={isMatchDialogOpen} onOpenChange={setIsMatchDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-center text-xl">Your Perfect Match!</DialogTitle>
+            <DialogTitle className="text-center text-xl">
+              Your Perfect Match!
+            </DialogTitle>
           </DialogHeader>
           {matchedDog && (
             <div className="flex flex-col items-center space-y-4 p-4">
@@ -781,7 +765,9 @@ export function PaginatedDataTable() {
               <div className="text-center space-y-2">
                 <h3 className="text-2xl font-bold">{matchedDog.name}</h3>
                 <p className="text-gray-600">{matchedDog.breed}</p>
-                <p className="text-gray-600">{matchedDog.age} {matchedDog.age === 1 ? 'year' : 'years'} old</p>
+                <p className="text-gray-600">
+                  {matchedDog.age} {matchedDog.age === 1 ? "year" : "years"} old
+                </p>
                 <p className="text-gray-600">Zip Code: {matchedDog.zip_code}</p>
               </div>
             </div>
