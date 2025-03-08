@@ -15,14 +15,8 @@ const Page = () => {
             Dogs Available For Adoption
           </h2>
         </div>
-        <div className="overflow-hidden rounded-xl shadow-xl bg-white">
-          <PaginatedDataTable
-            columns={columns}
-            initialSearchParams={{
-              sort: "breed:asc",
-              size: "10",
-            }}
-          />
+        <div className="overflow-hidden">
+          <PaginatedDataTable columns={columns} />
         </div>
       </div>
     </main>

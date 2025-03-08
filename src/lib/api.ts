@@ -39,7 +39,7 @@ const dog_breeds = async () => {
     throw new Error("Failed to fetch breeds");
   }
 
-  const data: String[] = await response.json();
+  const data: string[] = await response.json();
   return data;
 };
 
@@ -69,10 +69,12 @@ export type DogSearchResult = {
 const dog_search = async (params: DogSearchParams) => {
   const searchParams = new URLSearchParams();
 
-  if (params.breeds) {
-    searchParams.append("breeds", params.breeds.join(","));
+  if (params.breeds && params.breeds.length > 0) {
+    params.breeds.forEach(breed => {
+      searchParams.append("breeds", breed);
+    });
   }
-  if (params.zipCodes) {
+  if (params.zipCodes && params.zipCodes.length > 0) {
     searchParams.append("zipCodes", params.zipCodes.join(","));
   }
   if (params.ageMin) {
@@ -81,14 +83,14 @@ const dog_search = async (params: DogSearchParams) => {
   if (params.ageMax) {
     searchParams.append("ageMax", params.ageMax.toString());
   }
-  if (params.size) {
+  if (params.size && params.size !== "") {
     searchParams.append("size", params.size);
-  }
-  if (params.from) {
-    searchParams.append("from", params.from);
   }
   if (params.sort) {
     searchParams.append("sort", params.sort);
+  }
+  if (params.from && params.from !== "") {
+    searchParams.append("from", params.from);
   }
 
   const response = await fetch(`${API_URL}/dogs/search?${searchParams}`, {
@@ -98,8 +100,6 @@ const dog_search = async (params: DogSearchParams) => {
     },
     credentials: "include",
   });
-
-  console.log("Response:", response);
 
   if (!response.ok) {
     throw new Error("Failed to fetch breeds");
@@ -186,7 +186,7 @@ const locations_get = async (params: LocationParams) => {
 type LocationSearchParams = {
   city: string;
   states: StateAbbreviation[];
-  geoBoundingBox: {};
+  geoBoundingBox: object;
 
   // Pagination Options
   size?: number;

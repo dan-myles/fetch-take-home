@@ -6,13 +6,11 @@ import { ColumnDef } from "@tanstack/react-table";
 export const columns: ColumnDef<Dog>[] = [
   {
     accessorKey: "img",
-    header: () => (
-      <div className="text-2xl">🦮</div>
-    ),
+    header: () => <div className="text-2xl">🦮</div>,
     cell: ({ row }) => {
       return (
         <div className="flex justify-center items-center">
-          <div className="w-32 h-32 relative">
+          <div className="w-24 h-24 relative">
             <img
               src={row.getValue("img")}
               alt="Dog"
@@ -20,8 +18,9 @@ export const columns: ColumnDef<Dog>[] = [
             />
           </div>
         </div>
-      )
-    }
+      );
+    },
+    enableSorting: false,
   },
   {
     accessorKey: "name",
@@ -33,8 +32,9 @@ export const columns: ColumnDef<Dog>[] = [
         <div className="font-medium text-base text-center">
           {row.getValue("name")}
         </div>
-      )
-    }
+      );
+    },
+    enableSorting: true,
   },
   {
     accessorKey: "age",
@@ -47,8 +47,9 @@ export const columns: ColumnDef<Dog>[] = [
         <div className="text-sm text-center">
           {age} {age === 1 ? "year" : "years"} old
         </div>
-      )
-    }
+      );
+    },
+    enableSorting: true,
   },
   {
     accessorKey: "zip_code",
@@ -60,8 +61,9 @@ export const columns: ColumnDef<Dog>[] = [
         <div className="text-sm text-gray-600 text-center">
           {row.getValue("zip_code")}
         </div>
-      )
-    }
+      );
+    },
+    enableSorting: false,
   },
   {
     accessorKey: "breed",
@@ -73,7 +75,8 @@ export const columns: ColumnDef<Dog>[] = [
         <div className="text-sm font-medium text-center">
           {row.getValue("breed")}
         </div>
-      )
-    }
+      );
+    },
+    enableSorting: true,
   },
 ];
