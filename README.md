@@ -5,8 +5,11 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, install dependencies 👏:
 
 ```bash
-npm install
+npm install --force
 ```
+
+> We are forcing because Next is on React 19 and a lot of things still don't work with it. Not sure why
+> Next defaults to 19 now :/
 
 Then, run the development server:
 
