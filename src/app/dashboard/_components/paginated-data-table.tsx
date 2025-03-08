@@ -227,7 +227,8 @@ export function PaginatedDataTable() {
 
   useEffect(() => {
     fetchDogs();
-  }, [fetchDogs, searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const handleNextPage = () => {
     const nextPageIndex = pagination.pageIndex + 1;
@@ -767,6 +768,8 @@ export function PaginatedDataTable() {
                   src={matchedDog.img}
                   alt={matchedDog.name}
                   className="w-full h-full object-cover"
+                  width={640}
+                  height={640}
                 />
               </div>
               <div className="text-center space-y-2">

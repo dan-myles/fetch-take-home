@@ -59,6 +59,8 @@ export const createColumns = ({
               src={row.getValue("img")}
               alt="Dog"
               className="rounded-md object-cover w-full h-full shadow-sm"
+              width={240}
+              height={240}
             />
           </div>
         </div>
