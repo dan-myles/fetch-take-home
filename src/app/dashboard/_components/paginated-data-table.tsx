@@ -59,6 +59,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export function PaginatedDataTable() {
   const [data, setData] = useState<Dog[]>([]);
@@ -226,7 +227,7 @@ export function PaginatedDataTable() {
 
   useEffect(() => {
     fetchDogs();
-  }, [searchParams]);
+  }, [fetchDogs, searchParams]);
 
   const handleNextPage = () => {
     const nextPageIndex = pagination.pageIndex + 1;
@@ -762,7 +763,7 @@ export function PaginatedDataTable() {
           {matchedDog && (
             <div className="flex flex-col items-center space-y-4 p-4">
               <div className="w-full h-64 relative rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={matchedDog.img}
                   alt={matchedDog.name}
                   className="w-full h-full object-cover"

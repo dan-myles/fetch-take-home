@@ -35,7 +35,7 @@ export const useAuth = () => {
       let foundCookie = false;
 
       for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i].trim();
+        const cookie = cookies[i].trim();
         if (cookie.startsWith("fetch-access-token" + "=")) {
           foundCookie = true;
           break;

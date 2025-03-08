@@ -46,7 +46,7 @@ const Page = () => {
               </div>
               <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
               <p className="text-gray-600">
-                I'm a fast learner and I love to learn new things. I'm
+                I&apos;m a fast learner and I love to learn new things. I&apos;m
                 constantly trying to stay up to date with everything web.
               </p>
             </div>
@@ -57,8 +57,8 @@ const Page = () => {
               <h3 className="text-xl font-semibold mb-2">Dedicated</h3>
               <p className="text-gray-600">
                 My dedication to quality is as strong as my interest in tech,
-                meaning I'll tirelessly ensure the project's success and be a
-                dedicated team member.
+                meaning I&apos;ll tirelessly ensure the project&apos;s success
+                and be a dedicated team member.
               </p>
             </div>
           </div>

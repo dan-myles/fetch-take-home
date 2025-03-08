@@ -4,6 +4,7 @@ import { Dog } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 interface ColumnProps {
   favoriteDogs: string[];
@@ -54,7 +55,7 @@ export const createColumns = ({
       return (
         <div className="flex justify-center items-center">
           <div className="w-24 h-24 relative">
-            <img
+            <Image
               src={row.getValue("img")}
               alt="Dog"
               className="rounded-md object-cover w-full h-full shadow-sm"
