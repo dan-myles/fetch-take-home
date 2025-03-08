@@ -5,22 +5,25 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Define a type for the column props that includes the favorite functionality
 interface ColumnProps {
   favoriteDogs: string[];
   onToggleFavorite: (dogId: string) => void;
 }
 
-// Export a function that creates columns with the favorite functionality
-export const createColumns = ({ favoriteDogs, onToggleFavorite }: ColumnProps): ColumnDef<Dog>[] => [
+export const createColumns = ({
+  favoriteDogs,
+  onToggleFavorite,
+}: ColumnProps): ColumnDef<Dog>[] => [
   {
     accessorKey: "favorite",
-    header: () => <div className="font-semibold text-gray-900 text-center">Favorite</div>,
+    header: () => (
+      <div className="font-semibold text-gray-900 text-center">Favorite</div>
+    ),
     cell: ({ row }) => {
       const dogId = row.original.id;
       const isFavorited = favoriteDogs.includes(dogId);
       const atMaxFavorites = favoriteDogs.length >= 5 && !isFavorited;
-      
+
       return (
         <div className="flex justify-center items-center">
           <Button
@@ -28,10 +31,16 @@ export const createColumns = ({ favoriteDogs, onToggleFavorite }: ColumnProps): 
             size="icon"
             onClick={() => onToggleFavorite(dogId)}
             disabled={atMaxFavorites}
-            className={`h-8 w-8 ${isFavorited ? 'text-red-500 hover:text-red-600' : 'text-gray-400 hover:text-gray-500'} ${atMaxFavorites ? 'cursor-not-allowed opacity-50' : ''}`}
-            title={atMaxFavorites ? "Maximum of 5 favorites reached" : isFavorited ? "Remove from favorites" : "Add to favorites"}
+            className={`h-8 w-8 ${isFavorited ? "text-red-500 hover:text-red-600" : "text-gray-400 hover:text-gray-500"} ${atMaxFavorites ? "cursor-not-allowed opacity-50" : ""}`}
+            title={
+              atMaxFavorites
+                ? "Maximum of 5 favorites reached"
+                : isFavorited
+                  ? "Remove from favorites"
+                  : "Add to favorites"
+            }
           >
-            <Heart className={`h-5 w-5 ${isFavorited ? 'fill-current' : ''}`} />
+            <Heart className={`h-5 w-5 ${isFavorited ? "fill-current" : ""}`} />
           </Button>
         </div>
       );

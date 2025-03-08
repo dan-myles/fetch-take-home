@@ -1,5 +1,4 @@
 import { Kalam } from "next/font/google";
-import { createColumns } from "./_components/columns";
 import { PaginatedDataTable } from "./_components/paginated-data-table";
 
 const kalam = Kalam({ subsets: ["latin"], weight: "400" });

@@ -43,7 +43,6 @@ import {
   ChevronRight,
   Filter,
   Loader2,
-  Search,
   X,
   Sparkles,
 } from "lucide-react";
@@ -54,6 +53,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
 
 export function PaginatedDataTable() {
   const [data, setData] = useState<Dog[]>([]);
@@ -75,11 +80,8 @@ export function PaginatedDataTable() {
     {},
   );
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
-
-  // Add state for favorited dogs (max 5)
   const [favoriteDogs, setFavoriteDogs] = useState<string[]>([]);
 
-  // Add state for matched dog
   const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
   const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false);
   const [isMatchLoading, setIsMatchLoading] = useState(false);
@@ -90,7 +92,6 @@ export function PaginatedDataTable() {
     sort: "breed:asc",
   });
 
-  // Create columns with favorite functionality
   const columns = createColumns({
     favoriteDogs,
     onToggleFavorite: handleToggleFavorite,
@@ -132,18 +133,6 @@ export function PaginatedDataTable() {
     setPagination({
       ...pagination,
       pageIndex: 0,
-    });
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    setPagination({
-      ...pagination,
-      pageIndex: 0,
-    });
-    setSearchParams({
-      ...searchParams,
-      from: "0",
     });
   };
 
@@ -212,7 +201,6 @@ export function PaginatedDataTable() {
     setError(null);
     try {
       console.log("Fetching with params:", searchParams);
-
       const searchResult = await api.dogs.search(searchParams);
       console.log("Search result:", searchResult);
 
@@ -297,17 +285,14 @@ export function PaginatedDataTable() {
   // Handle toggling dog favorites (max 5)
   function handleToggleFavorite(dogId: string) {
     setFavoriteDogs((prev) => {
-      // If dog is already favorited, remove it
       if (prev.includes(dogId)) {
         return prev.filter((id) => id !== dogId);
       }
 
-      // If already at max favorites, don't add more
       if (prev.length >= 5) {
         return prev;
       }
 
-      // Add the dog to favorites
       return [...prev, dogId];
     });
   }
@@ -320,7 +305,6 @@ export function PaginatedDataTable() {
     try {
       const matchResult = await api.dogs.match({ ids: favoriteDogs });
 
-      // Get the matched dog details
       if (matchResult.match) {
         const matchedDogData = await api.dogs.get({ ids: [matchResult.match] });
         if (matchedDogData && matchedDogData.length > 0) {
@@ -365,24 +349,6 @@ export function PaginatedDataTable() {
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             {/* Left side: Search and Find Match */}
             <div className="flex flex-wrap items-center gap-2">
-              <div className="relative w-full sm:w-64">
-                <form onSubmit={handleSearch}>
-                  <Input
-                    placeholder="Search dogs..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pr-8"
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  >
-                    <Search className="h-4 w-4" />
-                  </button>
-                </form>
-              </div>
-
-              {/* Find Match Button - Only show when dogs are favorited */}
               {favoriteDogs.length > 0 && (
                 <Button
                   variant="outline"
@@ -397,10 +363,50 @@ export function PaginatedDataTable() {
                   <span className="absolute inset-0 rounded-md overflow-hidden">
                     <span className="absolute inset-0 rounded-md bg-gradient-to-r from-yellow-400/0 via-yellow-400/30 to-yellow-400/0 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer"></span>
                   </span>
+                  <Separator orientation="vertical" className="mx-4" />
+                  {/* How many dogs are favorited */}
+                  <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 group-hover:text-gray-700">
+                    {favoriteDogs.length}
+                  </span>
                   {isMatchLoading && (
                     <Loader2 className="ml-2 h-4 w-4 animate-spin" />
                   )}
                 </Button>
+              )}
+
+              {/* Clear favorites button */}
+              {favoriteDogs.length > 0 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setFavoriteDogs([])}
+                  className=" bg-transparent text-black hover:bg-red-300"
+                >
+                  <X className="h-4 w-" />
+                </Button>
+              )}
+
+              {/* Find Match Button - Only show when dogs are favorited */}
+              {favoriteDogs.length === 0 && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleFindMatch}
+                      disabled={isMatchLoading}
+                      className="bg-gray-200 cursor:not-allowed text-gray-500 hover:bg-gray-200"
+                    >
+                      <Sparkles className="h-4 w-4 mr-2 text-yellow-500" />
+                      <span>Find Match</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="text-sm">
+                      Favorite some dogs to find a match!
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
               )}
             </div>
 
