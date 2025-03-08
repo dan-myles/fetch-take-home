@@ -1,28 +1,25 @@
 "use client";
 
-import {  dogBreeds } from "@/lib/types";
+import { Dog } from "@/lib/types";
 import { useEffect, useState } from "react";
 import {
-  ColumnDef,
+  SortingState,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-  SortingState,
   getSortedRowModel,
+  useReactTable,
 } from "@tanstack/react-table";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { api, DogSearchParams } from "@/lib/api";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -31,14 +28,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { api, DogSearchParams } from "@/lib/api";
-import { Dog } from "@/lib/types";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   ArrowDown,
   ArrowUp,
@@ -49,21 +45,52 @@ import {
   Loader2,
   Search,
   X,
+  Sparkles,
 } from "lucide-react";
+import { createColumns } from "./columns";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-interface PaginatedDataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-}
-
-export function PaginatedDataTable<TData, TValue>({
-  columns,
-}: PaginatedDataTableProps<TData, TValue>) {
+export function PaginatedDataTable() {
   const [data, setData] = useState<Dog[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const pageSizeOptions = [5, 10, 20, 50];
   const [pageSize, setPageSize] = useState(10);
+
+  // Create an array of all dog breeds from the DogBreed type
+  const dogBreeds = [
+    "Affenpinscher", "Afghan Hound", "African Hunting Dog", "Airedale", 
+    "American Staffordshire Terrier", "Appenzeller", "Australian Terrier", 
+    "Basenji", "Basset", "Beagle", "Bedlington Terrier", "Bernese Mountain Dog", 
+    "Black-and-tan Coonhound", "Blenheim Spaniel", "Bloodhound", "Bluetick", 
+    "Border Collie", "Border Terrier", "Borzoi", "Boston Bull", 
+    "Bouvier Des Flandres", "Boxer", "Brabancon Griffon", "Briard", 
+    "Brittany Spaniel", "Bull Mastiff", "Cairn", "Cardigan", 
+    "Chesapeake Bay Retriever", "Chihuahua", "Chow", "Clumber", 
+    "Cocker Spaniel", "Collie", "Curly-coated Retriever", "Dandie Dinmont", 
+    "Dhole", "Dingo", "Doberman", "English Foxhound", "English Setter", 
+    "English Springer", "EntleBucher", "Eskimo Dog", "Flat-coated Retriever", 
+    "French Bulldog", "German Shepherd", "German Short-haired Pointer", 
+    "Giant Schnauzer", "Golden Retriever", "Gordon Setter", "Great Dane", 
+    "Great Pyrenees", "Greater Swiss Mountain Dog", "Groenendael", 
+    "Ibizan Hound", "Irish Setter", "Irish Terrier", "Irish Water Spaniel", 
+    "Irish Wolfhound", "Italian Greyhound", "Japanese Spaniel", "Keeshond", 
+    "Kelpie", "Kerry Blue Terrier", "Komondor", "Kuvasz", "Labrador Retriever", 
+    "Lakeland Terrier", "Leonberg", "Lhasa", "Malamute", "Malinois", 
+    "Maltese Dog", "Mexican Hairless", "Miniature Pinscher", "Miniature Poodle", 
+    "Miniature Schnauzer", "Newfoundland", "Norfolk Terrier", 
+    "Norwegian Elkhound", "Norwich Terrier", "Old English Sheepdog", 
+    "Otterhound", "Papillon", "Pekinese", "Pembroke", "Pomeranian", "Pug", 
+    "Redbone", "Rhodesian Ridgeback", "Rottweiler", "Saint Bernard", "Saluki", 
+    "Samoyed", "Schipperke", "Scotch Terrier", "Scottish Deerhound", 
+    "Sealyham Terrier", "Shetland Sheepdog", "Shih-Tzu", "Siberian Husky", 
+    "Silky Terrier", "Soft-coated Wheaten Terrier", "Staffordshire Bullterrier", 
+    "Standard Poodle", "Standard Schnauzer", "Sussex Spaniel", "Tibetan Mastiff", 
+    "Tibetan Terrier", "Toy Poodle", "Toy Terrier", "Vizsla", "Walker Hound", 
+    "Weimaraner", "Welsh Springer Spaniel", "West Highland White Terrier", 
+    "Whippet", "Wire-haired Fox Terrier", "Yorkshire Terrier"
+  ];
 
   const [pagination, setPagination] = useState({
     pageIndex: 0,
@@ -77,11 +104,25 @@ export function PaginatedDataTable<TData, TValue>({
     {},
   );
   const [breedFilter, setBreedFilter] = useState<string[]>([]);
+  
+  // Add state for favorited dogs (max 5)
+  const [favoriteDogs, setFavoriteDogs] = useState<string[]>([]);
+  
+  // Add state for matched dog
+  const [matchedDog, setMatchedDog] = useState<Dog | null>(null);
+  const [isMatchDialogOpen, setIsMatchDialogOpen] = useState(false);
+  const [isMatchLoading, setIsMatchLoading] = useState(false);
 
   const [searchParams, setSearchParams] = useState<DogSearchParams>({
     size: pageSize.toString(),
     from: "0",
     sort: "breed:asc",
+  });
+
+  // Create columns with favorite functionality
+  const columns = createColumns({
+    favoriteDogs,
+    onToggleFavorite: handleToggleFavorite,
   });
 
   const hasActiveFilters =
@@ -267,39 +308,72 @@ export function PaginatedDataTable<TData, TValue>({
   };
 
   const handlePageSizeChange = (value: string) => {
-    const newPageSize = parseInt(value);
+    const newSize = parseInt(value);
+    setPageSize(newSize);
 
-    setPageSize(newPageSize);
     setPagination({
       ...pagination,
       pageIndex: 0,
-      totalPages: Math.ceil(pagination.totalResults / newPageSize),
     });
 
     setSearchParams({
       ...searchParams,
-      size: newPageSize.toString(),
       from: "0",
+      size: newSize.toString(),
     });
   };
 
+  // Handle toggling dog favorites (max 5)
+  function handleToggleFavorite(dogId: string) {
+    setFavoriteDogs((prev) => {
+      // If dog is already favorited, remove it
+      if (prev.includes(dogId)) {
+        return prev.filter((id) => id !== dogId);
+      }
+      
+      // If already at max favorites, don't add more
+      if (prev.length >= 5) {
+        return prev;
+      }
+      
+      // Add the dog to favorites
+      return [...prev, dogId];
+    });
+  }
+
+  // Handle finding a match from favorited dogs
+  const handleFindMatch = async () => {
+    if (favoriteDogs.length === 0) return;
+    
+    setIsMatchLoading(true);
+    try {
+      const matchResult = await api.dogs.match({ ids: favoriteDogs });
+      
+      // Get the matched dog details
+      if (matchResult.match) {
+        const matchedDogData = await api.dogs.get({ ids: [matchResult.match] });
+        if (matchedDogData && matchedDogData.length > 0) {
+          setMatchedDog(matchedDogData[0] as Dog);
+          setIsMatchDialogOpen(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error finding a match:", error);
+    } finally {
+      setIsMatchLoading(false);
+    }
+  };
+
   const table = useReactTable({
-    data: data as unknown as TData[],
+    data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: handleSortingChange,
     state: {
-      pagination: {
-        pageIndex: pagination.pageIndex,
-        pageSize,
-      },
       sorting,
     },
     manualPagination: true,
-    pageCount: pagination.totalPages,
-    manualSorting: true,
   });
 
   const startItem = pagination.pageIndex * pageSize + 1;
@@ -316,199 +390,226 @@ export function PaginatedDataTable<TData, TValue>({
 
       {/* Search and Filter Section */}
       <section className="p-4">
-        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex w-full md:w-auto">
-            <div className="relative flex-grow">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-              <Input
-                type="text"
-                placeholder="Search dogs..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-10 w-full md:w-[250px]"
-              />
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            {/* Left side: Search and Find Match */}
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="relative w-full sm:w-64">
+                <form onSubmit={handleSearch}>
+                  <Input
+                    placeholder="Search dogs..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pr-8"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                  >
+                    <Search className="h-4 w-4" />
+                  </button>
+                </form>
+              </div>
+
+              {/* Find Match Button - Only show when dogs are favorited */}
+              {favoriteDogs.length > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleFindMatch}
+                  disabled={isMatchLoading}
+                  className="relative group h-8"
+                >
+                  <Sparkles className="h-4 w-4 mr-2 text-yellow-500" />
+                  <span>Find Match</span>
+                  {/* Sparkle effect */}
+                  <span className="absolute inset-0 rounded-md overflow-hidden">
+                    <span className="absolute inset-0 rounded-md bg-gradient-to-r from-yellow-400/0 via-yellow-400/30 to-yellow-400/0 opacity-0 group-hover:opacity-100 group-hover:animate-shimmer"></span>
+                  </span>
+                  {isMatchLoading && <Loader2 className="ml-2 h-4 w-4 animate-spin" />}
+                </Button>
+              )}
             </div>
-            <Button
-              type="submit"
-              size="sm"
-              className="ml-2 h-10 bg-purple-300 text-black hover:bg-transparent"
-            >
-              Search
-            </Button>
-          </form>
 
-          <div className="flex flex-wrap gap-2 items-center">
-            {/* Age Filter */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10 flex items-center gap-1 bg-purple-300 text-black hover:bg-transparent"
-                >
-                  <Filter className="h-4 w-4" />
-                  Age
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-4">
-                <div className="space-y-4">
-                  <h4 className="font-medium">Filter by Age</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="min-age">Min Age</Label>
-                      <Input
-                        id="min-age"
-                        type="number"
-                        min={0}
-                        placeholder="Min"
-                        value={ageFilter.min || ""}
-                        onChange={(e) =>
-                          handleAgeFilterChange(
-                            e.target.value
-                              ? parseInt(e.target.value)
-                              : undefined,
-                            ageFilter.max,
-                          )
-                        }
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="max-age">Max Age</Label>
-                      <Input
-                        id="max-age"
-                        type="number"
-                        min={0}
-                        placeholder="Max"
-                        value={ageFilter.max || ""}
-                        onChange={(e) =>
-                          handleAgeFilterChange(
-                            ageFilter.min,
-                            e.target.value
-                              ? parseInt(e.target.value)
-                              : undefined,
-                          )
-                        }
-                      />
-                    </div>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            {/* Breed Filter */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-10 flex items-center gap-1 bg-purple-300 text-black hover:bg-transparent"
-                >
-                  <Filter className="h-4 w-4" />
-                  Breed
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80 p-4">
-                <div className="space-y-4">
-                  <h4 className="font-medium">Filter by Breed</h4>
-                  <div className="space-y-2 max-h-[200px] overflow-auto">
-                    {dogBreeds.map((breed) => (
-                      <div key={breed} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`breed-${breed}`}
-                          checked={breedFilter.includes(breed)}
-                          onCheckedChange={(checked) =>
-                            handleBreedFilterChange(breed, checked === true)
+            {/* Right side: Filter buttons */}
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Age Filter */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 bg-purple-300 text-black hover:bg-purple-200">
+                    <Filter className="h-4 w-4 mr-1" />
+                    Age
+                    {Object.keys(ageFilter).length > 0 && (
+                      <span className="ml-1 rounded-full bg-primary w-2 h-2" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Filter by Age</h4>
+                    <div className="flex items-center space-x-2">
+                      <div className="grid flex-1 gap-2">
+                        <Label htmlFor="ageMin">Min</Label>
+                        <Input
+                          id="ageMin"
+                          type="number"
+                          min={0}
+                          placeholder="Min age"
+                          value={ageFilter.min ?? ""}
+                          onChange={(e) =>
+                            setAgeFilter({
+                              ...ageFilter,
+                              min: e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined,
+                            })
                           }
                         />
-                        <Label htmlFor={`breed-${breed}`}>{breed}</Label>
                       </div>
-                    ))}
+                      <div className="grid flex-1 gap-2">
+                        <Label htmlFor="ageMax">Max</Label>
+                        <Input
+                          id="ageMax"
+                          type="number"
+                          min={0}
+                          placeholder="Max age"
+                          value={ageFilter.max ?? ""}
+                          onChange={(e) =>
+                            setAgeFilter({
+                              ...ageFilter,
+                              max: e.target.value
+                                ? parseInt(e.target.value)
+                                : undefined,
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() =>
+                        handleAgeFilterChange(ageFilter.min, ageFilter.max)
+                      }
+                      className="bg-purple-300 text-black hover:bg-purple-200"
+                    >
+                      Apply
+                    </Button>
                   </div>
+                </PopoverContent>
+              </Popover>
+
+              {/* Breed Filter */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 bg-purple-300 text-black hover:bg-purple-200">
+                    <Filter className="h-4 w-4 mr-1" />
+                    Breed
+                    {breedFilter.length > 0 && (
+                      <span className="ml-1 rounded-full bg-primary w-2 h-2" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80 p-4">
+                  <div className="space-y-4">
+                    <h4 className="font-medium">Filter by Breed</h4>
+                    <div className="space-y-2 max-h-[200px] overflow-auto">
+                      {dogBreeds.map((breed) => (
+                        <div key={breed} className="flex items-center space-x-2">
+                          <Checkbox
+                            id={`breed-${breed}`}
+                            checked={breedFilter.includes(breed)}
+                            onCheckedChange={(checked) =>
+                              handleBreedFilterChange(breed, checked === true)
+                            }
+                          />
+                          <Label
+                            htmlFor={`breed-${breed}`}
+                            className="text-sm font-normal"
+                          >
+                            {breed}
+                          </Label>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              {/* Clear Filters */}
+              {hasActiveFilters && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleClearFilters}
+                  className="h-8 bg-purple-300 text-black hover:bg-purple-200"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Clear Filters
+                </Button>
+              )}
+            </div>
+          </div>
+
+          {/* Active Filters Display */}
+          {hasActiveFilters && (
+            <div className="flex flex-wrap gap-1 mt-2">
+              {searchQuery.trim() !== "" && (
+                <div className="flex items-center bg-purple-100 text-xs rounded-full px-2 py-1">
+                  <span className="mr-1">Search: {searchQuery}</span>
+                  <button
+                    onClick={() => {
+                      setSearchQuery("");
+                      setSearchParams({
+                        ...searchParams,
+                        from: "0",
+                      });
+                    }}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 </div>
-              </PopoverContent>
-            </Popover>
-
-            {/* Clear Filters Button */}
-            {hasActiveFilters && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleClearFilters}
-                className="h-10 text-xs flex items-center bg-purple-100 text-black hover:bg-transparent"
-              >
-                <X className="h-3 w-3 mr-1" />
-                Clear Filters
-              </Button>
-            )}
-          </div>
+              )}
+              {breedFilter.map((breed) => (
+                <div
+                  key={breed}
+                  className="flex items-center bg-purple-100 text-xs rounded-full px-2 py-1"
+                >
+                  <span className="mr-1">{breed}</span>
+                  <button
+                    onClick={() => handleBreedFilterChange(breed, false)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
+              {Object.keys(ageFilter).length > 0 && (
+                <div className="flex items-center bg-purple-100 text-xs rounded-full px-2 py-1">
+                  <span className="mr-1">
+                    Age: {ageFilter.min !== undefined ? ageFilter.min : "0"}
+                    {ageFilter.max !== undefined
+                      ? ` - ${ageFilter.max}`
+                      : "+"}
+                  </span>
+                  <button
+                    onClick={() => handleAgeFilterChange(undefined, undefined)}
+                    className="text-gray-500 hover:text-gray-700"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+              {sorting.length > 0 && (
+                <div className="flex items-center bg-purple-100 text-xs rounded-full px-2 py-1">
+                  <span className="mr-1">
+                    Sort: {sorting[0].id} {sorting[0].desc ? "↓" : "↑"}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
         </div>
-
-        {/* Active Filters Display */}
-        {hasActiveFilters && (
-          <div className="mt-4 flex flex-wrap gap-2">
-            {searchQuery && (
-              <div className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center">
-                Search: {searchQuery}
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="ml-1 hover:text-purple-900"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-
-            {ageFilter.min !== undefined && (
-              <div className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center">
-                Min Age: {ageFilter.min}
-                <button
-                  onClick={() =>
-                    handleAgeFilterChange(undefined, ageFilter.max)
-                  }
-                  className="ml-1 hover:text-purple-900"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-
-            {ageFilter.max !== undefined && (
-              <div className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center">
-                Max Age: {ageFilter.max}
-                <button
-                  onClick={() =>
-                    handleAgeFilterChange(ageFilter.min, undefined)
-                  }
-                  className="ml-1 hover:text-purple-900"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            )}
-
-            {breedFilter.map((breed) => (
-              <div
-                key={breed}
-                className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center"
-              >
-                Breed: {breed}
-                <button
-                  onClick={() => handleBreedFilterChange(breed, false)}
-                  className="ml-1 hover:text-purple-900"
-                >
-                  <X className="h-3 w-3" />
-                </button>
-              </div>
-            ))}
-
-            {sorting.length > 0 && (
-              <div className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full flex items-center">
-                Sort: {sorting[0].id} {sorting[0].desc ? "↓" : "↑"}
-              </div>
-            )}
-          </div>
-        )}
       </section>
 
       <div className="overflow-auto max-h-[59.5vh] relative rounded-xl bg-white">
@@ -661,6 +762,32 @@ export function PaginatedDataTable<TData, TValue>({
           </Button>
         </div>
       </div>
+
+      {/* Match Dialog */}
+      <Dialog open={isMatchDialogOpen} onOpenChange={setIsMatchDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Your Perfect Match!</DialogTitle>
+          </DialogHeader>
+          {matchedDog && (
+            <div className="flex flex-col items-center space-y-4 p-4">
+              <div className="w-full h-64 relative rounded-lg overflow-hidden">
+                <img
+                  src={matchedDog.img}
+                  alt={matchedDog.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="text-center space-y-2">
+                <h3 className="text-2xl font-bold">{matchedDog.name}</h3>
+                <p className="text-gray-600">{matchedDog.breed}</p>
+                <p className="text-gray-600">{matchedDog.age} {matchedDog.age === 1 ? 'year' : 'years'} old</p>
+                <p className="text-gray-600">Zip Code: {matchedDog.zip_code}</p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

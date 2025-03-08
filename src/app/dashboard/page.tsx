@@ -1,5 +1,5 @@
 import { Kalam } from "next/font/google";
-import { columns } from "./_components/columns";
+import { createColumns } from "./_components/columns";
 import { PaginatedDataTable } from "./_components/paginated-data-table";
 
 const kalam = Kalam({ subsets: ["latin"], weight: "400" });
@@ -16,7 +16,7 @@ const Page = () => {
           </h2>
         </div>
         <div className="overflow-hidden">
-          <PaginatedDataTable columns={columns} />
+          <PaginatedDataTable />
         </div>
       </div>
     </main>
