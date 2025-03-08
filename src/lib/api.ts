@@ -66,7 +66,7 @@ export type DogSearchResult = {
   prev?: string;
 };
 
-const dog_search = async (params: DogSearchParams) => {
+const dog_search = async (params: DogSearchParams, signal?: AbortSignal) => {
   const searchParams = new URLSearchParams();
 
   if (params.breeds && params.breeds.length > 0) {
@@ -99,6 +99,7 @@ const dog_search = async (params: DogSearchParams) => {
       "Content-Type": "application/json",
     },
     credentials: "include",
+    signal,
   });
 
   if (!response.ok) {
@@ -113,7 +114,7 @@ type DogGetParams = {
   ids: string[];
 };
 
-const dog_get = async (params: DogGetParams) => {
+const dog_get = async (params: DogGetParams, signal?: AbortSignal) => {
   if (params.ids.length >= 100) {
     throw new Error("Too many dogs requested");
   }
@@ -125,6 +126,7 @@ const dog_get = async (params: DogGetParams) => {
     },
     body: JSON.stringify(params.ids),
     credentials: "include",
+    signal,
   });
 
   if (!response.ok) {

@@ -197,16 +197,23 @@ export function PaginatedDataTable() {
     }
   }, [sorting]);
 
-  const fetchDogs = async () => {
+  const fetchDogs = async (abortSignal?: AbortSignal) => {
     setLoading(true);
     setError(null);
     try {
       console.log("Fetching with params:", searchParams);
-      const searchResult = await api.dogs.search(searchParams);
+      const searchResult = await api.dogs.search(searchParams, abortSignal);
       console.log("Search result:", searchResult);
 
+      // Check if the request was aborted
+      if (abortSignal?.aborted) return;
+
       if (searchResult.resultIds.length > 0) {
-        const dogsData = await api.dogs.get({ ids: searchResult.resultIds });
+        const dogsData = await api.dogs.get({ ids: searchResult.resultIds }, abortSignal);
+        
+        // Check again if the request was aborted
+        if (abortSignal?.aborted) return;
+        
         setData(dogsData as unknown as Dog[]);
 
         setPagination({
@@ -218,17 +225,39 @@ export function PaginatedDataTable() {
         setData([]);
       }
     } catch (err) {
+      // Don't set error if the request was aborted
+      if (err instanceof Error && err.name === 'AbortError') {
+        console.log('Fetch aborted');
+        return;
+      }
+      
       setError("Failed to fetch dogs. Please try again.");
       console.error(err);
     } finally {
-      setLoading(false);
+      if (!abortSignal?.aborted) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchDogs();
+    // Create an AbortController to cancel the fetch if the component unmounts
+    // or if searchParams changes before the fetch completes
+    const abortController = new AbortController();
+    
+    // Use a small delay to prevent rapid consecutive fetches
+    const timeoutId = setTimeout(() => {
+      fetchDogs(abortController.signal);
+    }, 100);
+    
+    // Cleanup function to abort any in-flight requests when the effect re-runs
+    return () => {
+      clearTimeout(timeoutId);
+      abortController.abort();
+    };
+    // We're using a stringified version of searchParams to prevent unnecessary re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
+  }, [JSON.stringify(searchParams)]);
 
   const handleNextPage = () => {
     const nextPageIndex = pagination.pageIndex + 1;
