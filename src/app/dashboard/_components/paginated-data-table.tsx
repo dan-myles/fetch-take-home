@@ -210,10 +210,10 @@ export function PaginatedDataTable() {
 
       if (searchResult.resultIds.length > 0) {
         const dogsData = await api.dogs.get({ ids: searchResult.resultIds }, abortSignal);
-        
+
         // Check again if the request was aborted
         if (abortSignal?.aborted) return;
-        
+
         setData(dogsData as unknown as Dog[]);
 
         setPagination({
@@ -230,7 +230,7 @@ export function PaginatedDataTable() {
         console.log('Fetch aborted');
         return;
       }
-      
+
       setError("Failed to fetch dogs. Please try again.");
       console.error(err);
     } finally {
@@ -241,21 +241,15 @@ export function PaginatedDataTable() {
   };
 
   useEffect(() => {
-    // Create an AbortController to cancel the fetch if the component unmounts
-    // or if searchParams changes before the fetch completes
     const abortController = new AbortController();
-    
-    // Use a small delay to prevent rapid consecutive fetches
     const timeoutId = setTimeout(() => {
       fetchDogs(abortController.signal);
     }, 100);
-    
-    // Cleanup function to abort any in-flight requests when the effect re-runs
+
     return () => {
       clearTimeout(timeoutId);
       abortController.abort();
     };
-    // We're using a stringified version of searchParams to prevent unnecessary re-renders
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(searchParams)]);
 
