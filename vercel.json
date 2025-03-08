@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next",
+      "config": {
+        "buildCommand": "npm config set legacy-peer-deps true && npm run build"
+      }
+    }
+  ]
+}
+
